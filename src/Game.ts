@@ -29,7 +29,7 @@ export class Game {
   private _lastSymbol: string = Symbol.empty;
   private _board: Board = new Board();
 
-  public Play(symbol: Symbol, x: Coordinate, y: Coordinate): void {
+  public play(symbol: Symbol, x: Coordinate, y: Coordinate): void {
     //if first move
     if (this._lastSymbol === Symbol.empty) {
       //if player is X
@@ -42,18 +42,18 @@ export class Game {
       throw new Error("Invalid next player");
     }
     //if not first move but play on an already played tile
-    else if (this._board.TileAt(new Position(x, y)).symbol !== Symbol.empty) {
+    else if (this._board.tileAt(new Position(x, y)).symbol !== Symbol.empty) {
       throw new Error("Invalid position");
     }
 
     // update game state
     this._lastSymbol = symbol;
-    this._board.AddTileAt(symbol, new Position(x, y));
+    this._board.addTileAt(symbol, new Position(x, y));
   }
 
-  public Winner(): string {
+  public winner(): string {
     for (let c = 0; c < 3; c++) {
-      const symbol = this._board.SameSymbolInRow(c as Coordinate);
+      const symbol = this._board.sameSymbolInRow(c as Coordinate);
       if (symbol != Symbol.empty) {
         return symbol;
       }
@@ -78,20 +78,20 @@ class Board {
     }
   }
 
-  public TileAt(position: Position): Tile {
+  public tileAt(position: Position): Tile {
     return this._plays.find((t: Tile) => t.position.equals(position))!;
   }
 
-  public AddTileAt(symbol: Symbol, position: Position): void {
-    this.TileAt(position).symbol = symbol;
+  public addTileAt(symbol: Symbol, position: Position): void {
+    this.tileAt(position).symbol = symbol;
   }
 
-  public SameSymbolInRow(row: Coordinate): Symbol {
-    const symbol = this.TileAt(new Position(row, 0)).symbol;
+  public sameSymbolInRow(row: Coordinate): Symbol {
+    const symbol = this.tileAt(new Position(row, 0)).symbol;
 
     const sameSymbolInRow =
-      symbol === this.TileAt(new Position(row, 1)).symbol &&
-      symbol === this.TileAt(new Position(row, 2)).symbol;
+      symbol === this.tileAt(new Position(row, 1)).symbol &&
+      symbol === this.tileAt(new Position(row, 2)).symbol;
 
     return sameSymbolInRow ? symbol : Symbol.empty;
   }
