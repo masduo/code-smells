@@ -6,9 +6,18 @@ export enum Symbol {
 
 type Coordinate = 0 | 1 | 2;
 
-interface Position {
-  x: Coordinate;
-  y: Coordinate;
+class Position {
+  public x: Coordinate;
+  public y: Coordinate;
+
+  public constructor(x: Coordinate, y: Coordinate) {
+    this.x = x;
+    this.y = y;
+  }
+
+  public equals(position: Position): boolean {
+    return this.x === position.x && this.y === position.y;
+  }
 }
 
 interface Tile {
@@ -33,13 +42,13 @@ export class Game {
       throw new Error("Invalid next player");
     }
     //if not first move but play on an already played tile
-    else if (this._board.TileAt({ x, y }).symbol !== Symbol.empty) {
+    else if (this._board.TileAt(new Position(x, y)).symbol !== Symbol.empty) {
       throw new Error("Invalid position");
     }
 
     // update game state
     this._lastSymbol = symbol;
-    this._board.AddTileAt(symbol, { x, y });
+    this._board.AddTileAt(symbol, new Position(x, y));
   }
 
   public Winner(): string {
@@ -61,7 +70,7 @@ class Board {
     for (let i = 0; i < 3; i++) {
       for (let j = 0; j < 3; j++) {
         const tile: Tile = {
-          position: { x: i as Coordinate, y: j as Coordinate },
+          position: new Position(i as Coordinate, j as Coordinate),
           symbol: Symbol.empty,
         };
         this._plays.push(tile);
@@ -70,9 +79,7 @@ class Board {
   }
 
   public TileAt(position: Position): Tile {
-    return this._plays.find(
-      (t: Tile) => t.position.x === position.x && t.position.y === position.y
-    )!;
+    return this._plays.find((t: Tile) => t.position.equals(position))!;
   }
 
   public AddTileAt(symbol: Symbol, position: Position): void {
@@ -80,11 +87,11 @@ class Board {
   }
 
   public SameSymbolInRow(row: Coordinate): Symbol {
-    const symbol = this.TileAt({ x: row, y: 0 }).symbol;
+    const symbol = this.TileAt(new Position(row, 0)).symbol;
 
     const sameSymbolInRow =
-      symbol === this.TileAt({ x: row, y: 1 }).symbol &&
-      symbol === this.TileAt({ x: row, y: 2 }).symbol;
+      symbol === this.TileAt(new Position(row, 1)).symbol &&
+      symbol === this.TileAt(new Position(row, 2)).symbol;
 
     return sameSymbolInRow ? symbol : Symbol.empty;
   }
