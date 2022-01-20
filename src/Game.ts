@@ -1,29 +1,7 @@
-export enum Symbol {
-  empty = " ",
-  X = "X",
-  O = "O",
-}
-
-type Coordinate = 0 | 1 | 2;
-
-class Position {
-  public x: Coordinate;
-  public y: Coordinate;
-
-  public constructor(x: Coordinate, y: Coordinate) {
-    this.x = x;
-    this.y = y;
-  }
-
-  public equals(position: Position): boolean {
-    return this.x === position.x && this.y === position.y;
-  }
-}
-
-interface Tile {
-  position: Position;
-  symbol: Symbol;
-}
+import { Board } from "./Board";
+import { Coordinate } from "./models/Coordinate";
+import { Position } from "./models/Position";
+import { Symbol } from "./models/Symbol";
 
 export class Game {
   private _lastSymbol: string = Symbol.empty;
@@ -38,7 +16,7 @@ export class Game {
       }
     }
     //if not first move but player repeated
-    else if (symbol === this._lastSymbol) {
+    else if (this._lastSymbol === symbol) {
       throw new Error("Invalid next player");
     }
     //if not first move but play on an already played tile
@@ -60,39 +38,5 @@ export class Game {
     }
 
     return Symbol.empty;
-  }
-}
-
-class Board {
-  private _plays: Tile[] = [];
-
-  constructor() {
-    for (let i = 0; i < 3; i++) {
-      for (let j = 0; j < 3; j++) {
-        const tile: Tile = {
-          position: new Position(i as Coordinate, j as Coordinate),
-          symbol: Symbol.empty,
-        };
-        this._plays.push(tile);
-      }
-    }
-  }
-
-  public tileAt(position: Position): Tile {
-    return this._plays.find((t: Tile) => t.position.equals(position))!;
-  }
-
-  public addTileAt(symbol: Symbol, position: Position): void {
-    this.tileAt(position).symbol = symbol;
-  }
-
-  public sameSymbolInRow(row: Coordinate): Symbol {
-    const symbol = this.tileAt(new Position(row, 0)).symbol;
-
-    const sameSymbolInRow =
-      symbol === this.tileAt(new Position(row, 1)).symbol &&
-      symbol === this.tileAt(new Position(row, 2)).symbol;
-
-    return sameSymbolInRow ? symbol : Symbol.empty;
   }
 }
